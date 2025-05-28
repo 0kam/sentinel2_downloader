@@ -14,6 +14,8 @@ Copernicus Data Space Ecosystem (CDSE) を使用してSentinel-2衛星画像を�
 
 - Python 3.12+
 - Copernicus Data Space Ecosystem のアカウント（無料）
+    - https://dataspace.copernicus.eu/ でアカウント作成
+    - ログインし、Dashboard -> User settings (左下) -> OAuth clientsで新しいClient ID, secretを発行
 
 ## インストール
 
@@ -133,9 +135,10 @@ function evaluatePixel(sample) {
 テスト用スクリプトを実行：
 
 ```bash
-# test_download.py のCLIENT_IDとCLIENT_SECRETを編集後
-python test_download.py
+# download_alps.py のCLIENT_IDとCLIENT_SECRETを編集後
+python download_alps.py
 ```
+中部山岳地域を対象に、NDSIの算出に必要なバンド（["B02", "B03", "B04", "B08", "B11", "B12"]）がダウンロードされます。
 
 ## 技術的詳細
 
@@ -183,9 +186,7 @@ CDSEでは一度にダウンロードできる画像サイズが2500x2500ピク�
 
 - `sentinel2_downloader.py`: メインのダウンローダープログラム
 - `example_evalscripts.py`: 各種評価スクリプトの例
-- `test_download.py`: テスト用スクリプト
-- `Pipfile`: 依存関係管理ファイル
-- `README_sentinel2_downloader.md`: このファイル
+- `download_alps.py`: テスト用スクリプト
 
 ## ライセンス
 
