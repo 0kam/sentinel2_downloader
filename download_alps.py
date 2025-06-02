@@ -10,6 +10,9 @@ from example_evalscripts import get_bands_for_ndsi_evalscript
 # テスト用の設定（実際の値に置き換えてください）
 CLIENT_ID = "CLIENT_ID"
 CLIENT_SECRET = "CLIENT_SECRET"
+#CLIENT_ID = os.getenv("CLIENT_ID")
+#CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+
 # 画像取得用のbboxを設定
 bbox = [  
         137.4546482305185,
@@ -44,6 +47,6 @@ try:
     downloader = Sentinel2Downloader(CLIENT_ID, CLIENT_SECRET)
     for date in dates:
         output_path = f"{output_dir}/{date}.tiff"
-        downloader.download(date, date, bbox, evalscript, output_path, type="S2L2A")
+        downloader.download(date, date, bbox, evalscript, output_path, image_type="S2L2A")
 except Exception as e:
     print(f"❌ エラー: {e}")

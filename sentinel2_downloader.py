@@ -109,7 +109,7 @@ class Sentinel2Downloader:
         return tiles
     
     def download_single_image(self, bbox: BBox, start_date: str, end_date: str, 
-                            evalscript: str, resolution: int = 20, type="S2L2A") -> Optional[np.ndarray]:
+                            evalscript: str, resolution: int = 20, image_type="S2L2A") -> Optional[np.ndarray]:
         """
         単一の画像をダウンロード
         
@@ -119,7 +119,7 @@ class Sentinel2Downloader:
             end_date: 終了日 (YYYY-MM-DD)
             evalscript: 評価スクリプト
             resolution: 解像度（メートル）
-            type: 画像タイプ（S2L1CまたはS2L2A）
+            image_type: 画像タイプ（S2L1CまたはS2L2A）
         Returns:
             画像データ（numpy配列）またはNone
         """
@@ -131,7 +131,7 @@ class Sentinel2Downloader:
                 "bounds": {"properties": {"crs": bbox.crs.opengis_string}, "bbox": list(bbox)},
                 "data": [
                     {
-                        "type": type,
+                        "type": image_type,
                         "dataFilter": {
                             "timeRange": {"from": f"{start_date}T00:00:00Z", "to": f"{end_date}T23:59:59Z"},
                             "mosaickingOrder": "leastCC",
@@ -378,7 +378,7 @@ class Sentinel2Downloader:
                         pass
     
     def download(self, start_date: str, end_date: str, bbox_coords: List[float], 
-                evalscript: str, output_path: str, resolution: int = 20, type="S2L2A"):
+                evalscript: str, output_path: str, resolution: int = 20, image_type="S2L2A"):
         """
         Sentinel-2画像をダウンロード
         
@@ -403,7 +403,7 @@ class Sentinel2Downloader:
         tile_images = []
         for i, tile_bbox in enumerate(tqdm(tiles, desc="タイルをダウンロード中")):
             logger.info(f"タイル {i+1}/{len(tiles)} をダウンロード中...")
-            img_data = self.download_single_image(tile_bbox, start_date, end_date, evalscript, resolution, type)
+            img_data = self.download_single_image(tile_bbox, start_date, end_date, evalscript, resolution, image_type)
             if img_data is not None:
                 tile_images.append((img_data, tile_bbox))
         
