@@ -44,6 +44,6 @@ try:
     downloader = Sentinel2Downloader(CLIENT_ID, CLIENT_SECRET)
     for date in dates:
         output_path = f"{output_dir}/{date}.tiff"
-        downloader.download(date, date, bbox, evalscript, output_path)
+        downloader.download(date, date, bbox, evalscript, output_path, type="S2L2A")
 except Exception as e:
     print(f"❌ エラー: {e}")

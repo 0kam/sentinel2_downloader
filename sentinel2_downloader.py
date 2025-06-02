@@ -109,7 +109,7 @@ class Sentinel2Downloader:
         return tiles
     
     def download_single_image(self, bbox: BBox, start_date: str, end_date: str, 
-                            evalscript: str, resolution: int = 20) -> Optional[np.ndarray]:
+                            evalscript: str, resolution: int = 20, type="S2L2A") -> Optional[np.ndarray]:
         """
         単一の画像をダウンロード
         
@@ -119,7 +119,7 @@ class Sentinel2Downloader:
             end_date: 終了日 (YYYY-MM-DD)
             evalscript: 評価スクリプト
             resolution: 解像度（メートル）
-            
+            type: 画像タイプ（S2L1CまたはS2L2A）
         Returns:
             画像データ（numpy配列）またはNone
         """
@@ -131,7 +131,7 @@ class Sentinel2Downloader:
                 "bounds": {"properties": {"crs": bbox.crs.opengis_string}, "bbox": list(bbox)},
                 "data": [
                     {
-                        "type": "S2L1C",
+                        "type": type,
                         "dataFilter": {
                             "timeRange": {"from": f"{start_date}T00:00:00Z", "to": f"{end_date}T23:59:59Z"},
                             "mosaickingOrder": "leastCC",
@@ -378,7 +378,7 @@ class Sentinel2Downloader:
                         pass
     
     def download(self, start_date: str, end_date: str, bbox_coords: List[float], 
-                evalscript: str, output_path: str, resolution: int = 20):
+                evalscript: str, output_path: str, resolution: int = 20, type="S2L2A"):
         """
         Sentinel-2画像をダウンロード
         
@@ -403,7 +403,7 @@ class Sentinel2Downloader:
         tile_images = []
         for i, tile_bbox in enumerate(tqdm(tiles, desc="タイルをダウンロード中")):
             logger.info(f"タイル {i+1}/{len(tiles)} をダウンロード中...")
-            img_data = self.download_single_image(tile_bbox, start_date, end_date, evalscript, resolution)
+            img_data = self.download_single_image(tile_bbox, start_date, end_date, evalscript, resolution, type)
             if img_data is not None:
                 tile_images.append((img_data, tile_bbox))
         
@@ -470,8 +470,10 @@ def main():
                        help='出力ファイルパス (GeoTIFF)')
     parser.add_argument('--client-id', required=True,
                        help='Copernicus Data Space Ecosystem のクライアントID')
-    parser.add_argument('--client-secret', required=True,
+    parser.add_argument('--client-secret', required=True, 
                        help='Copernicus Data Space Ecosystem のクライアントシークレット')
+    parser.add_argument('--type', required=False, default="S2L2A",
+                       help='画像タイプ（S2L1CまたはS2L2A）。デフォルトはS2L2A。')
     
     # オプション引数
     parser.add_argument('--end-date',
@@ -506,8 +508,9 @@ def main():
         logger.info(f"  範囲: {args.bbox}")
         logger.info(f"  出力: {args.output}")
         logger.info(f"  解像度: {args.resolution}m")
+        logger.info(f"  画像タイプ: {args.type}")
         
-        downloader.download(start_date, end_date, args.bbox, evalscript, args.output, args.resolution)
+        downloader.download(start_date, end_date, args.bbox, evalscript, args.output, args.resolution, args.type)
         
         logger.info("✅ ダウンロード完了!")
         
